@@ -28,7 +28,7 @@ mod errors;
 
 pub use self::errors::HandshakeError;
 
-use hmac::{Hmac, Mac, NewMac};
+use hmac::{Hmac, Mac};
 use rand;
 use rand::Rng;
 use sha2::Sha256;
@@ -488,7 +488,7 @@ fn calc_hmac_from_parts(part1: &[u8], part2: &[u8], key: &[u8]) -> [u8; SHA256_D
 }
 
 fn calc_hmac(input: &[u8], key: &[u8]) -> [u8; SHA256_DIGEST_LENGTH] {
-    let mut mac = Hmac::<Sha256>::new_varkey(key).unwrap();
+    let mut mac = Hmac::<Sha256>::new_from_slice(key).unwrap();
     mac.update(input);
 
     let result = mac.finalize();
@@ -890,7 +890,7 @@ mod tests {
 
     #[test]
     fn hmac_test3() {
-        let mut mac = Hmac::<Sha256>::new_varkey(&[0x0b; 20]).unwrap();
+        let mut mac = Hmac::<Sha256>::new_from_slice(&[0x0b; 20]).unwrap();
         mac.update(b"Hi There");
 
         let expected = [
